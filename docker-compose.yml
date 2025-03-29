@@ -1,0 +1,30 @@
+services:
+  app:
+    build: .
+    env_file:
+      - .env
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+    environment:
+      - COMPOSE_CONVERT_WINDOWS_PATHS=1
+    depends_on:
+      - db
+    networks:
+      - finance-net
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: finance_db
+      POSTGRES_USER: finance_user
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./database:/docker-entrypoint-initdb.d
+    networks:
+      - finance-net
+
+networks:
+  finance-net:
+    driver: bridge

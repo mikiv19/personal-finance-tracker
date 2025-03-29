@@ -6,6 +6,17 @@ use App\Models\Transaction;
 use Exception;
 
 class DashboardController {
+    private $userId;
+
+    public function __construct() {
+        $this->userId = $_SESSION['user_id'] ?? null;
+        
+        if (!$this->userId) {
+            header('Location: /login');
+            exit;
+        }
+    }
+
     public function getTransactions() {
         header('Content-Type: application/json');
         try {

@@ -8,6 +8,23 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+<div class="header">
+    <h1>Welcome User <?= $_SESSION['user_id'] ?></h1>
+    <a href="/logout">Logout</a>
+</div>
+<script>
+
+async function loadDashboard() {
+    try {
+        const response = await fetch('/api/transactions');
+        if (response.status === 401) {
+            window.location = '/login';
+            return;
+        }
+
+    }
+}
+</script>
     <div class="dashboard-container">
         <div class="summary-grid">
             <div class="card income">

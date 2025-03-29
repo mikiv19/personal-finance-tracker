@@ -1,27 +1,33 @@
 <?php
-namespace App\Controllers;
 
-use App\Models\Transaction; 
-use Exception; 
-
+namespace App\Controllers; 
 class TransactionController {
-    public function getTransactions() {
-        header('Content-Type: application/json');        
-        try {
-            session_start(); 
-            if (!isset($_SESSION['user_id'])) {
-                throw new Exception("Unauthorized", 401);
-            }
 
-            $userId = $_SESSION['user_id'];
-            $transactions = (new Transaction())->getAll($userId);
-            
-            echo json_encode($transactions, JSON_THROW_ON_ERROR);
-            
-        } catch(Exception $e) {
-            http_response_code($e->getCode() ?: 500);
-            echo json_encode(['error' => $e->getMessage()]);
+
+    public function create(array $data) {
+        // Validate required fields
+        $required = ['amount', 'description', 'type', 'date'];
+        foreach ($required as $field) {
+            if (!isset($data[$field])) {
+                throw new \InvalidArgumentException("Missing required field: $field");
+            }
         }
-        exit;
+    
+        $stmt = $this->db->prepare("
+            INSERT INTO transactions 
+            (user_id, amount, description, type, category, date)
+            VALUES (:user_id, :amount, :description, :type, :category, :date)
+        ");
+    
+        $stmt->execute([
+            'user_id' => $_SESSION['user_id'],
+            'amount' => $data['amount'],
+            'description' => $data['description'],
+            'type' => $data['type'],
+            'category' => $data['category'],
+            'date' => $data['date']
+        ]);
+    
+        return $this->db->lastInsertId();
     }
 }

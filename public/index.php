@@ -61,10 +61,12 @@ switch ($requestPath) {
         header('Content-Type: application/json');
         (new DashboardController())->getSummary();
         break;
-    case '/api/transactions':
-        header('Content-Type: application/json');
-        (new DashboardController())->getTransactions();
-        break;
+
+        case '/api/transactions':
+            header('Content-Type: application/json');
+            (new DashboardController())->getTransactions();
+            break;
+
     default:
         header('Content-Type: application/json');
         http_response_code(404);

@@ -3,12 +3,13 @@ require __DIR__ . '/../app/config.php';
 require __DIR__ . '/../vendor/autoload.php';
 session_start();
 
+$_SESSION['id'] = 1; // Simulate a logged-in user for testing
+
 
 error_log("Request Path: " . $_SERVER['REQUEST_URI']);
 $requestPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 error_log("Parsed Path: " . $requestPath);
 
-// Custom error handler
 set_error_handler(function($severity, $message, $file, $line) {
     header('Content-Type: application/json');
     http_response_code(500);

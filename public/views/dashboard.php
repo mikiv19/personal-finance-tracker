@@ -10,7 +10,6 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <!-- Summary Cards -->
         <div class="summary-grid">
             <div class="card income">
                 <h3>Monthly Income</h3>
@@ -22,12 +21,10 @@
             </div>
         </div>
 
-        <!-- Chart Container -->
         <div class="chart-container">
             <canvas id="spending-chart"></canvas>
         </div>
 
-        <!-- Transaction List -->
         <div class="transaction-list">
             <h2>Recent Transactions</h2>
             <table id="transactions-table">
@@ -40,7 +37,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Filled via JavaScript -->
                 </tbody>
             </table>
         </div>

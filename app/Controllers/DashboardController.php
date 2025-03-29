@@ -10,17 +10,15 @@ class DashboardController {
 public function getSummary() {
     try {
         header('Content-Type: application/json');
-        session_start();
 
-        if (!isset($_SESSION['user_id'])) {
+        if (!isset($_SESSION['id'])) {
             throw new Exception("Unauthorized", 401);
         }
 
-        $userId = $_SESSION['user_id'];
+        $userId = $_SESSION['id'];
         $calculator = new SummaryCalculator();
         $summary = $calculator->getMonthlySummary($userId);
         
-        echo json_encode($summary, JSON_THROW_ON_ERROR);
         
     } catch(Throwable $e) {
         error_log("Summary Error: " . $e->getMessage()); // Log to PHP error log

@@ -1,4 +1,3 @@
-// public/js/charts.js
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         const [summaryRes, transactionsRes] = await Promise.all([

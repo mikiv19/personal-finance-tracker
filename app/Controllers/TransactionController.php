@@ -1,7 +1,7 @@
 <?php
 namespace App\Controllers; 
 class TransactionController {
-    // app/Controllers/DashboardController.php
+    
 public function getTransactions() {
     header('Content-Type: application/json');
     session_start();

@@ -8,37 +8,34 @@ class SummaryCalculator {
         global $db;
         $this->db = $db;
     }
-
     public function getMonthlySummary(int $userId): array {
-        // Income
-        $income = $this->db->prepare("
-            SELECT SUM(amount) AS total 
+        $incomeStmt = $this->db->prepare("
+            SELECT COALESCE(SUM(amount), 0) 
             FROM transactions 
             WHERE user_id = ? AND amount > 0
         ");
-        $income->execute([$userId]);
+        $incomeStmt->execute([$userId]);
         
-        // Expenses
-        $expenses = $this->db->prepare("
-            SELECT SUM(amount) AS total 
+        $expenseStmt = $this->db->prepare("
+            SELECT COALESCE(SUM(ABS(amount)), 0) 
             FROM transactions 
             WHERE user_id = ? AND amount < 0
         ");
-        $expenses->execute([$userId]);
+        $expenseStmt->execute([$userId]);
+    
 
-        // Categories
-        $categories = $this->db->prepare("
-            SELECT category, SUM(amount) AS total 
+        $categoryStmt = $this->db->prepare("
+            SELECT category, SUM(ABS(amount)) 
             FROM transactions 
             WHERE user_id = ? AND amount < 0 
             GROUP BY category
         ");
-        $categories->execute([$userId]);
-
+        $categoryStmt->execute([$userId]);
+    
         return [
-            'total_income' => (float) ($income->fetchColumn() ?? 0),
-            'total_expenses' => (float) (abs($expenses->fetchColumn()) ?? 0),
-            'by_category' => $categories->fetchAll(\PDO::FETCH_KEY_PAIR)
+            'total_income' => (float) $incomeStmt->fetchColumn(),
+            'total_expenses' => (float) $expenseStmt->fetchColumn(),
+            'by_category' => $categoryStmt->fetchAll(\PDO::FETCH_KEY_PAIR)
         ];
     }
 }

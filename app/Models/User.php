@@ -10,7 +10,6 @@ class User {
     }
 
     public function register(string $email, string $password): int {
-        // Validate email/password format first (add tests later)
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new \InvalidArgumentException("Invalid email format");
         }

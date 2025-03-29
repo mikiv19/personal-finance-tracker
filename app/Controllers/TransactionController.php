@@ -1,25 +1,27 @@
 <?php
-namespace App\Controllers; 
-class TransactionController {
-    
-public function getTransactions() {
-    header('Content-Type: application/json');
-    session_start();
-    
-    try {
-        if (!isset($_SESSION['user_id'])) {
-            throw new Exception("Unauthorized", 401);
-        }
+namespace App\Controllers;
 
-        $userId = $_SESSION['user_id'];
-        $transactions = (new Transaction())->getAll($userId);
-        
-        echo json_encode($transactions);
-        
-    } catch(Exception $e) {
-        http_response_code($e->getCode() ?: 500);
-        echo json_encode(['error' => $e->getMessage()]);
+use App\Models\Transaction; 
+use Exception; 
+
+class TransactionController {
+    public function getTransactions() {
+        header('Content-Type: application/json');        
+        try {
+            session_start(); 
+            if (!isset($_SESSION['user_id'])) {
+                throw new Exception("Unauthorized", 401);
+            }
+
+            $userId = $_SESSION['user_id'];
+            $transactions = (new Transaction())->getAll($userId);
+            
+            echo json_encode($transactions, JSON_THROW_ON_ERROR);
+            
+        } catch(Exception $e) {
+            http_response_code($e->getCode() ?: 500);
+            echo json_encode(['error' => $e->getMessage()]);
+        }
+        exit;
     }
-    exit;
-}
 }

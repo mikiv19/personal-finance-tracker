@@ -1,9 +1,11 @@
 <?php
 require __DIR__ . '/../app/config.php';
 require __DIR__ . '/../vendor/autoload.php';
-session_start();
 
-$_SESSION['id'] = 1; // Simulate a logged-in user for testing
+use App\Controllers\AuthController;
+use App\Controllers\DashboardController;
+
+session_start();
 
 
 error_log("Request Path: " . $_SERVER['REQUEST_URI']);
@@ -25,16 +27,43 @@ set_error_handler(function($severity, $message, $file, $line) {
 $requestPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 switch ($requestPath) {
-    case '/dashboard':
-        require __DIR__ . '/views/dashboard.php';
+    case '/login':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            (new AuthController())->login();
+        } else {
+            (new AuthController())->showLogin();
+            require __DIR__ . '/views/login.php';
+        }
         break;
+
+    case '/register':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            (new AuthController())->register();
+        } else {
+            (new AuthController())->showRegister();
+            require __DIR__ . '/views/register.php';
+        }
+        break;
+
+    case '/logout':
+        (new AuthController())->logout();
+        break;
+
+    case '/dashboard':
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+        exit;
+        }
+    require __DIR__ . '/views/dashboard.php';
+    break;
+
     case '/api/summary':
         header('Content-Type: application/json');
-        (new App\Controllers\DashboardController())->getSummary();
+        (new DashboardController())->getSummary();
         break;
     case '/api/transactions':
         header('Content-Type: application/json');
-        (new App\Controllers\DashboardController())->getTransactions();
+        (new DashboardController())->getTransactions();
         break;
     default:
         header('Content-Type: application/json');

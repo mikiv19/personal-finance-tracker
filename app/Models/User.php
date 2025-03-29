@@ -9,29 +9,17 @@ class User {
         $this->db = $db;
     }
 
-    public function register(string $email, string $password): int {
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new \InvalidArgumentException("Invalid email format");
-        }
-
+    public function create(array $data) {
         $stmt = $this->db->prepare("
-            INSERT INTO users (email, password_hash)
-            VALUES (?, ?)
+            INSERT INTO users (email, password_hash) 
+            VALUES (:email, :password_hash)
         ");
-        $stmt->execute([
-            $email,
-            password_hash($password, PASSWORD_DEFAULT)
-        ]);
-        return $this->db->lastInsertId();
+        $stmt->execute($data);
     }
-
-    public function login(string $email, string $password): bool {
-        $stmt = $this->db->prepare("
-            SELECT password_hash FROM users WHERE email = ?
-        ");
+    
+    public function findByEmail(string $email): ?array {
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->execute([$email]);
-        $user = $stmt->fetch();
-
-        return $user && password_verify($password, $user['password_hash']);
+        return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
     }
 }

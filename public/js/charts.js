@@ -25,7 +25,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     } catch (error) {
         console.error('Dashboard Error:', error);
-        showError(`Data load failed: ${error.message}`);
     }
     function showError(message) {
         const errorDiv = document.createElement('div');
